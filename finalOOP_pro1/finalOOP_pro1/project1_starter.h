@@ -3,6 +3,7 @@
 
 
 #include <iostream>
+#include <string>
 using namespace std;
 //starter for project 1
 
@@ -55,9 +56,28 @@ public:
   static Date today;
   Date( int dd=0, int mm=0, int yy=0 )
   {
+	checkDate(dd,mm,yy);
     dd ? d = dd : today.d;
     mm ? m = mm : today.m;
     yy ? y = yy : today.y;
+  }
+  void checkDate(int &d, int &m, int &y)
+  {
+	  if (d > 31 || d < 0)
+	  {
+		  cout << "set day is error." << endl << "auto set to " << today.d << endl;
+		  d = today.d;
+	  }
+	  if (m > 12 || m < 0)
+	  {
+		  cout << "set month is error." << endl << "auto set to " << today.m << endl;
+		  m = today.m;
+	  }
+	  if (y > 2019 || y < 0)
+	  {
+		  cout << "set day is error." << endl << "auto set to " << today.y << endl;
+		  y = today.y;
+	  }
   }
   friend ostream& operator<<( ostream&, Date );
 };
@@ -69,7 +89,7 @@ ostream& operator<<( ostream& os, Date dt )
 }
 
 
-Date Date::today( 12, 25, 2003 );
+Date Date::today( 1, 1, 2000 );
 
 
 
@@ -117,28 +137,59 @@ class Person{
   
 public:
     
-  Person();
+  Person():name("Person"), address("No.43,Section 4, Keelung Rd, Da'an District, Taipei City,106"), ssn(123456789), birthdate(Date::today) 
+  {
+  }
   // constructor:
-  Person( const string theName, unsigned long theSSN, Date theBday, const string theAddress );
-
+  Person(const string theName, unsigned long theSSN, Date theBday, const string theAddress):name(theName), address(theAddress), ssn(theSSN), birthdate(theBday) {
+  }
   // copy constructor:
-  Person( const Person& );
+  Person(const Person& obj) {
+	  name = obj.name;
+	  address = obj.address;
+	  ssn = obj.ssn;
+	  birthdate = obj.birthdate;
+  }
   
   // copy assignment operator:
-  Person& operator=( const Person& );
-
+  Person& operator=(const Person& obj) {
+	  name = obj.name;
+	  address = obj.address;
+	  ssn = obj.ssn;
+	  birthdate = obj.birthdate;
+	  return *this;
+  }
   // destructor:
-  ~Person();
-
-  void setName( const string theName );
-  string getName() const;
-  void setAddress( const string theAddress );
-  string getAddress() const;
-  Date getBirthDate() const;
-  unsigned long getIdentification() const;
-  void setIdentification( unsigned long newID );
+  ~Person() {
   
-  virtual void print() const;
+  }
+  void setName(const string theName) {
+	  name = theName;
+  }
+  string getName() const {
+	  return name;
+  }
+  void setAddress(const string theAddress) {
+	  address = theAddress;
+  }
+  string getAddress() const {
+	  return address;
+  }
+  Date getBirthDate() const {
+	  return birthdate;
+  }
+  unsigned long getIdentification() const {
+	  return ssn;
+  }
+  void setIdentification(unsigned long newID) {
+	  ssn = newID;
+  }
+  virtual void print() const {
+	  cout << "name = " << name << endl
+		  << "address = " << address << endl
+		  << "Identification = " << ssn << endl
+		  << "BirthDate = " << birthdate << endl;
+  }
 };
 
 

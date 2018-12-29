@@ -1,7 +1,3 @@
-#ifndef __PROJECT1_STARTER_HPP__
-#define __PROJECT1_STARTER_HPP__
-
-
 #include <iostream>
 #include <string>
 using namespace std;
@@ -372,4 +368,3 @@ public:
   // from two different bases  
   void print() const;   
 };
-#endif // !__PROJECT1_STARTER_HPP__

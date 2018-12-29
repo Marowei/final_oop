@@ -1,0 +1,11 @@
+*.tlog*
+*.sln
+*.vcxproj*
+*.exe
+*.ilk
+finalOOP_pro1/finalOOP_pro1/Debug/*
+finalOOP_pro2/finalOOP_pro2/Debug/*
+finalOOP_pro3/finalOOP_pro3/Debug/*
+finalOOP_pro1/finalOOP_pro1/Release/*
+finalOOP_pro2/finalOOP_pro2/Release/*
+finalOOP_pro3/finalOOP_pro3/Release/*

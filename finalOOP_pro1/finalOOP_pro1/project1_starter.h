@@ -99,20 +99,45 @@ class Course{
 
 public:
 
-  Course();                                  // no-arg constructor
-  Course( const string, long );              // constructor
-  Course( const Course& );                   // copy constructor
-  Course& operator=( const Course& other );  // copy assignment op  
-  ~Course();                                 // destructor
+	Course(): courseName("null"), courseId(0){
+	};                                  
+	// no-arg constructor
+	Course(const string, long):courseName(courseName), courseId(courseId){
+	};              
+	// constructor
+	Course(const Course& other) {
+		courseName = other.courseName;
+		courseId = other.courseId;
+	};                   
+	// copy constructor
+	Course& operator=(const Course& other) {
+		if (this!=&other) {
+			courseName = other.courseName;
+			courseId = other.courseId;
+		}
+		return *this;
+	};  
+	// copy assignment op  
+	~Course() {
+	};                                 
+	// destructor
 
   // comparison operators:
   bool operator==( const Course& );
   bool operator!=( const Course& );
 
-  string getCourseName() const;
-  void setCourseName( const string );
-  long getCourseId() const;
-  void setCourseId( long );
+  string getCourseName() const {
+	  return courseName;
+  };
+  void setCourseName(const string CourseName) {
+	  courseName = CourseName;
+  };
+  long getCourseId() const {
+	  return courseId;
+  };
+  void setCourseId(long CourseId) {
+	  courseId = CourseId;
+  };
 
   friend ostream& operator<<( ostream& os, Course aCourse )
   {
@@ -204,32 +229,57 @@ class Student : virtual public Person {
   
 public:
 
-  Student();
+	Student() :Person(), status(sUnknown), department(dUnknown) {
+	}
 
   // constructor:
-  Student( const string theName, 
-           unsigned long theSSN, 
-	       const Date  theBirthDate,
-           const string theAddress, 
-           StudentStatus theStatus,
-           Department theDepartment );
+	Student(const string theName,
+		unsigned long theSSN,
+		const Date  theBirthDate,
+		const string theAddress,
+		StudentStatus theStatus,
+		Department theDepartment)
+		: Person(theName, theSSN, theBirthDate, theAddress), status(theStatus), department(theDepartment) {
+	};
 
 
   // copy constructor, assignment operator, destructor:
-  Student( const Student& );
-  Student& operator=( const Student& );
-  ~Student();
+	 Student(const Student& other):Person(other) {
+		status = other.status;
+		department = other.department;
+	};
+	 Student& operator=(const Student& other){
+		 if (this!=&other) {
+			 Person::operator=(other);
+			 status = other.status;
+			 department = other.department;
+		 }
+		 return *this;
+	 };
+	 ~Student() {};
 
-  void setStatus( StudentStatus aStatus );
-  StudentStatus getStatus() const;
-  void setDepartment( Department dept );
-  Department getDepartment() const;
+	 void setStatus(StudentStatus aStatus) {
+		 status = aStatus;
+	 };
+	 StudentStatus getStatus() const {
+		 return status;
+	 };
+	 void setDepartment(Department dept) {
+		 department = dept;
+	 };
+	 Department getDepartment() const {
+		 return department;
+	 };
 
   bool enrollForCourse(const Course& aCourse);
   bool dropFromCourse(const Course& theCourse);
   void listCoursesRegisteredFor() const;
 
-  void print() const;
+  void print() const {
+	  Person::print();
+	  cout << "status = " << status << endl
+		  << "department = " << department << endl;
+  };
 };
 
 

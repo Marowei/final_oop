@@ -381,17 +381,26 @@ class GraduateStudent : public Student {
 public:
   
   //constructor:
-  GraduateStudent();
-  GraduateStudent( const string theName,
-                   unsigned long theSSN,
-                   const Date theBirthDate,
-                   const string theAddress,
-                   StudentStatus theStatus,
-                   Department theDepartment,
-                   const Teacher& theAdvisor);
+	GraduateStudent() :Student() ,advisor(){};
+	GraduateStudent(const string theName,
+			unsigned long theSSN,
+			const Date theBirthDate,
+			const string theAddress,
+			StudentStatus theStatus,
+			Department theDepartment,
+			const Teacher& theAdvisor)
+			: Student(theName, theSSN, theBirthDate, theAddress, theStatus, theDepartment), advisor(theAdvisor) {};
   
-  GraduateStudent( const GraduateStudent& other );
-  GraduateStudent&  operator=( const GraduateStudent& other );
+	GraduateStudent(const GraduateStudent& other): Student(other){
+		advisor = other.advisor;
+	};
+	GraduateStudent&  operator=(const GraduateStudent& other) {
+		if (this != &other) {
+			Student::operator=(other);
+			advisor = other.advisor;
+		}
+		return *this;
+	};
   ~GraduateStudent(){}
 
 
@@ -400,11 +409,18 @@ public:
   //low-level courses
   bool enrollForCourse( const Course& aCourse );
 
-  void changeAdvisor( const Teacher& newAdvisor );
+  void changeAdvisor(const Teacher& newAdvisor) {
+	  advisor = newAdvisor;
+  };
 
-  Teacher getAdvisor() const;
+  Teacher getAdvisor() const {
+	  return advisor;
+  };
 
-  void print() const;
+  void print() const {
+	  Student::print();
+	  cout << "advisor = " << advisor.getName() << endl;
+  };
 };
 
 

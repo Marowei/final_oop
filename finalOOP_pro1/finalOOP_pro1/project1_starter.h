@@ -303,19 +303,39 @@ class Teacher : virtual public Person {
   
 public:
 
-  Teacher();
-  Teacher( const string theName, long theSSN, const Date theBirthDate,
-           const string theAddress, Rank theRank, Department theDepartment);
-  Teacher( const Teacher& other );
-  Teacher& operator=( const Teacher& other );
-  ~Teacher();
+	Teacher() :Person(), rank(rUnknown), department(dUnknown) {};
+	Teacher(const string theName, long theSSN, const Date theBirthDate,
+		const string theAddress, Rank theRank, Department theDepartment)
+		: Person(theName, theSSN, theBirthDate, theAddress), rank(theRank), department(theDepartment) {
+	};
+	Teacher(const Teacher& other):Person(other) {
+		rank = other.rank;
+		department = other.department;
+	};
+	Teacher& operator=(const Teacher& other) {
+		if (this != &other) {
+			Person::operator=(other);
+			rank = other.rank;
+			department = other.department;
+		}
+		return *this;
+	};
+	~Teacher() {};
 
-  void setDepartment( Department dept );
-  Department getDepartment() const;
+	void setDepartment(Department dept) {
+		department = dept;
+	};
+	Department getDepartment() const {
+		return department;
+	};
 
   // change rank when the teacher is promoted
-  void setRank( Rank newRank );
-  Rank getRank() const;
+	void setRank(Rank newRank) {
+		rank = newRank;
+	};
+	Rank getRank() const {
+		return rank;
+	};
 
   void listCoursesTaught() const;
   // offer this course
@@ -327,10 +347,19 @@ public:
   bool dropGrader( const string grader );
   void listGraders() const;
 
-  double getSalary() const;
-  void setSalary( double theSalary );
+  double getSalary() const {
+	  return salary;
+  };
+  void setSalary(double theSalary) {
+	  salary = theSalary;
+  };
 
-  void print() const;
+  void print() const {
+	  Person::print();
+	  cout << "rank = " << rank << endl
+		  << "salary = "<< salary <<endl
+		  << "department = " << department << endl;
+  };
 };
 
 

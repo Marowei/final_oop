@@ -18,6 +18,9 @@
     <ClCompile Include="finalOOP_pro1.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
+    <ClCompile Include="starter.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project1_starter.h">

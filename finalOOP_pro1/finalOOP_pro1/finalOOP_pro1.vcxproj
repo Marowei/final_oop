@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="finalOOP_pro1.cpp" />
+    <ClCompile Include="starter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project1_starter.h" />

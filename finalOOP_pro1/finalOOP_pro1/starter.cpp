@@ -52,15 +52,15 @@ ostream& operator<<(ostream& os, Date dt)
 Date Date::today(1, 1, 2000);
 
 Course::Course() : courseName("null"), courseId(0), ownerCounter(0) {
-};
+}
 // no-arg constructor
 Course::Course(const string str, long id) :courseName(str), courseId(id), ownerCounter(0) {
-};
+}
 // constructor
 Course::Course(const Course& other): ownerCounter(0) {
 	courseName = other.courseName;
 	courseId = other.courseId;
-};
+}
 // copy constructor
 Course& Course::operator=(const Course& other) {
 	if (this != &other) {
@@ -68,11 +68,11 @@ Course& Course::operator=(const Course& other) {
 		courseId = other.courseId;
 	}
 	return *this;
-};
+}
 // copy assignment op  
 Course::~Course() {
 	removeAllOwnerStudent();
-};
+}
 // destructor
 bool Course::addOwnerStudent(Student& student) {
 	if (ownerCounter >= MaxStudentForCourses) {
@@ -101,16 +101,16 @@ bool Course::operator!=(const Course& other) const {
 
 string Course::getCourseName() const {
 	return courseName;
-};
+}
 void Course::setCourseName(const string CourseName) {
 	courseName = CourseName;
-};
+}
 long Course::getCourseId() const {
 	return courseId;
-};
+}
 void Course::setCourseId(long CourseId) {
 	courseId = CourseId;
-};
+}
 bool Course::removeOwnerStudent(Student& student) {
 	for (int i = 0; i < ownerCounter; i++) {
 		if (*courseOwner[i] == student) {  //swap i and last
@@ -206,14 +206,14 @@ Student::Student(const string theName,
 	StudentStatus theStatus,
 	Department theDepartment)
 	: Person(theName, theSSN, theBirthDate, theAddress), status(theStatus), department(theDepartment), numCourses(0){
-};
+}
 
 
 // copy constructor, assignment operator, destructor:
 Student::Student(const Student& other) :Person(other), numCourses(0) {
 	status = other.status;
 	department = other.department;
-};
+}
 Student& Student::operator=(const Student& other) {
 	if (this != &other) {
 		Person::operator=(other);
@@ -221,23 +221,23 @@ Student& Student::operator=(const Student& other) {
 		department = other.department;
 	}
 	return *this;
-};
+}
 Student::~Student() {
 	dropAllCourse();
-};
+}
 
 void Student::setStatus(StudentStatus aStatus) {
 	status = aStatus;
-};
+}
 StudentStatus Student::getStatus() const {
 	return status;
-};
+}
 void Student::setDepartment(Department dept) {
 	department = dept;
-};
+}
 Department Student::getDepartment() const {
 	return department;
-};
+}
 
 bool Student::enrollForCourse(Course& aCourse) {
 	if (numCourses >= MaxCoursesForStudent) {
@@ -284,21 +284,21 @@ void Student::print() const {
 	Person::print();
 	cout << "status = " << statusLabels[status] << endl
 		<< "department = " << departmentNames[department] << endl;
-};
+}
 //////////// derived class Teacher /////////////
 Teacher::Teacher() :Person(), rank(rUnknown), department(dUnknown), salary(0), numCourses(0), numGraders(0) {};
-Teacher::Teacher(const string theName, long theSSN, const Date theBirthDate,
-	const string theAddress, Rank theRank, Department theDepartment, double theSalary): 
+Teacher::Teacher(const string& theName, long theSSN, const Date theBirthDate,
+	const string& theAddress, Rank theRank, Department theDepartment, double theSalary): 
 	Person(theName, theSSN, theBirthDate, theAddress), rank(theRank),
 	department(theDepartment),
 	salary(theSalary),
 	numCourses(0),
 	numGraders(0){
-};
+}
 Teacher::Teacher(const Teacher& other) :Person(other), numCourses(0), numGraders(0) {
 	rank = other.rank;
 	department = other.department;
-};
+}
 Teacher& Teacher::operator=(const Teacher& other) {
 	if (this != &other) {
 		Person::operator=(other);
@@ -306,25 +306,26 @@ Teacher& Teacher::operator=(const Teacher& other) {
 		department = other.department;
 	}
 	return *this;
-};
+}
 Teacher::~Teacher() {
 	dropAllCourse();
-};
+}
 
 void Teacher::setDepartment(Department dept) {
 	department = dept;
-};
+}
 Department Teacher::getDepartment() const {
 	return department;
-};
+}
 
 // change rank when the teacher is promoted
-void Teacher::setRank(Rank newRank) {
+bool Teacher::setRank(Rank newRank) {
 	rank = newRank;
-};
+	return true;
+}
 Rank Teacher::getRank() const {
 	return rank;
-};
+}
 void Teacher::listCoursesTaught() const {
 	cout << getName() << "'s course list:" << endl;
 	for (int i = 0; i < numCourses;i++){
@@ -392,20 +393,21 @@ void Teacher::listGraders() const {
 
 double Teacher::getSalary() const {
 	return salary;
-};
+}
 void Teacher::setSalary(double theSalary) {
 	salary = theSalary;
-};
+}
 
 void Teacher::print() const {
 	Person::print();
 	cout << "rank = " << rankNames[rank] << endl
 		<< "salary = " << salary << endl
 		<< "department = " << departmentNames[department] << endl;
-};
+}
 ////////// derived class GraduateStudent /////////////
 GraduateStudent::GraduateStudent() : Student(), Person(), advisor(nullptr) {
-};
+}
+
 GraduateStudent::GraduateStudent(const string& theName,
 	unsigned long theSSN,
 	const Date theBirthDate,
@@ -416,18 +418,18 @@ GraduateStudent::GraduateStudent(const string& theName,
 	: Student(theName, theSSN, theBirthDate, theAddress, theStatus, theDepartment),
 	  Person(theName, theSSN, theBirthDate, theAddress),
 	  advisor(&theAdvisor) {
-};
+}
 
 GraduateStudent::GraduateStudent(const GraduateStudent& other) : Student(other),Person(other) {
 	advisor = other.advisor;
-};
+}
 GraduateStudent&  GraduateStudent::operator=(const GraduateStudent& other) {
 	if (this != &other) {
 		Student::operator=(other);
 		advisor = other.advisor;
 	}
 	return *this;
-};
+}
 GraduateStudent::~GraduateStudent() {
 }
 //need to override the following method inherited from 
@@ -445,16 +447,74 @@ bool GraduateStudent::enrollForCourse(Course& aCourse) {
 
 void GraduateStudent::changeAdvisor(Teacher& newAdvisor) {
 	advisor = &newAdvisor;
-};
+}
 
 Teacher& GraduateStudent::getAdvisor() const {
 	if (advisor == nullptr) {
 		throw runtime_error("teacher is null");
 	}
 	return *advisor;
-};
+}
 
 void GraduateStudent::print() const {
 	Student::print();
 	cout << "advisor = " << advisor->getName() << endl;
-};
+}
+//////////// derived class GradTeachAsst ///////////////
+GradTeachAsst::GradTeachAsst() :GraduateStudent(), Teacher(), Person() {
+}
+GradTeachAsst::GradTeachAsst(const string& theName,
+	unsigned long theSSN,
+	const Date theBirthDate,
+	const string& theAddress,
+	StudentStatus theStatus,
+	Department studentDepartment,    // (A)
+	Teacher& theAdvisor,
+	Department teachingDepartment,    // compare to A
+	Rank theRank):GraduateStudent(theName,theSSN,theBirthDate,theAddress,theStatus, studentDepartment,theAdvisor),
+	Teacher(theName, theSSN, theBirthDate, theAddress, theRank, teachingDepartment,0.0),
+	Person(theName, theSSN, theBirthDate, theAddress) {
+}
+
+GradTeachAsst::GradTeachAsst(const GradTeachAsst& other) : GraduateStudent(other), Teacher(other), Person(other){
+}
+GradTeachAsst& GradTeachAsst::operator=(const GradTeachAsst& other) {
+	if (this != &other) {
+		GraduateStudent::operator=(other);
+		Teacher::operator=(other);
+		Person::operator=(other);
+	}
+	return *this;
+}
+GradTeachAsst::~GradTeachAsst() {
+}
+
+void GradTeachAsst::setStudentDepartment(Department dept) {
+	GraduateStudent::setDepartment(dept);
+}
+Department GradTeachAsst::getStudentDepartment() const {
+	return GraduateStudent::getDepartment();
+}
+
+void GradTeachAsst::setTeachingDepartment(Department dept) {
+	Teacher::setDepartment(dept);
+}
+Department GradTeachAsst::getTeachingDepartment() const {
+	return Teacher::getDepartment();
+}
+
+// this method must be overridden because for a GradTeachAsst
+// the rank cannot be changed
+bool GradTeachAsst::setRank(Rank newRank) {
+	cout << getName() << " unable to modify rank." << endl;
+	return false;
+}
+
+// this method must be overridden because of name conflict
+// from two different bases  
+void GradTeachAsst::print() const {
+	GraduateStudent::print();
+	cout << "rank = " << rankNames[getRank()] << endl
+		<< "salary = " << getSalary() << endl
+		<< "teaching department = " << departmentNames[Teacher::getDepartment()] << endl;
+}

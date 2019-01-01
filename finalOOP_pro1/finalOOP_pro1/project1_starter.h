@@ -164,8 +164,8 @@ class Teacher : virtual public Person {
 public:
 
 	Teacher();
-	Teacher(const string theName, long theSSN, const Date theBirthDate,
-		const string theAddress, Rank theRank, Department theDepartment, double theSalary);
+	Teacher(const string& theName, long theSSN, const Date theBirthDate,
+		const string& theAddress, Rank theRank, Department theDepartment, double theSalary);
 	Teacher(const Teacher& other);
 	Teacher& operator=(const Teacher& other);
 	~Teacher();
@@ -174,7 +174,7 @@ public:
 	Department getDepartment() const;
 
   // change rank when the teacher is promoted
-	void setRank(Rank newRank);
+	virtual bool setRank(Rank newRank);
 	Rank getRank() const;
 	void listCoursesTaught() const;
   // offer this course
@@ -234,20 +234,20 @@ public:
 
 //////////// derived class GradTeachAsst ///////////////
 
-/*
+
 class GradTeachAsst : public GraduateStudent, public Teacher {
 
 public:
 
   //constructor:
   GradTeachAsst();
-  GradTeachAsst( const string theName,
+  GradTeachAsst(const string& theName,
                  unsigned long theSSN,
                  const Date theBirthDate,
-                 const string theAddress,
+                 const string& theAddress,
                  StudentStatus theStatus,
                  Department studentDepartment,    // (A)
-                 const Teacher& theAdvisor,
+                 Teacher& theAdvisor,
                  Department teachingDepartment,    // compare to A
 				 Rank theRank = GradTeachingAsst);
 
@@ -264,10 +264,9 @@ public:
   
   // this method must be overridden because for a GradTeachAsst
   // the rank cannot be changed
-  bool setRank( Rank newRank );
+  bool setRank(Rank newRank);
 
   // this method must be overridden because of name conflict
   // from two different bases  
-  void print() const;   
+  virtual void print() const;   
 };
-*/

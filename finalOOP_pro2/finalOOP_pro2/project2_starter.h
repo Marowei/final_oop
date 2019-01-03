@@ -17,6 +17,9 @@ enum Department{Accounting, Business, Engineering, Mathematics,
 enum Rank {Instructor,GradTeachingAsst,AsstProf,
            AssocProf,Professor,ResScientist,Dean,rUnknown};
 
+//another enum type for project 2
+enum Qualification { NoSchooling, HighSchool, Undergraduate, Graduate, Doctorate };
+
 class Person;
 class Student;
 ///////////////   utility class Date   ////////////////
@@ -67,8 +70,39 @@ public:
 
 	friend ostream& operator<<(ostream& os, Course aCourse);
 };
+/////////////     base class M_QualifiedToTeach      ///////////////
+class M_QualifiedToTeach
+{
+public:
 
+	virtual void setDepartment(Department dept) = 0;
+	virtual Department getDepartment() const = 0;
 
+	virtual void listCoursesQuailfuedToTeach() const = 0;
+	virtual double getYearOfExperience() const = 0;
+
+	virtual Qualification getHighestDegree() const = 0;
+	virtual double getSalary() const = 0;
+	// offer this course
+	virtual bool offerCourse(Course& aCourse) = 0;
+	// cancel this course
+	virtual bool dropCourse(Course& theCourse) = 0;
+	virtual void dropTeachAllCourse() = 0;
+};
+
+/////////////     base class M_CanBecomestudent      ///////////////
+class M_CanBecomestudent
+{
+public:
+	virtual void setDepartment(Department dept) = 0;
+	virtual Department getDepartment() const = 0;
+
+	virtual bool enrollForCourse(Course& aCourse) = 0;
+	virtual bool dropFromCourse(Course& theCourse) = 0;
+	virtual void listCoursesRegisteredFor() const = 0;
+	virtual void dropAllCourse() = 0;
+	virtual Qualification getStudentQualification() const = 0;
+};
 /////////////     base class Person      ///////////////
 
 class Person{
@@ -107,12 +141,13 @@ constexpr int MaxCoursesForStudent = 4;
 ///////////////// derived class Student //////////////
 
 
-class Student : virtual public Person {
+class Student : public Person,public M_CanBecomestudent{
 
   StudentStatus status;
   Department    department;
   Course*       enrolled[MaxCoursesForStudent];
-  int           numCourses; 
+  int           numCourses;
+  Qualification qualification;
   
 public:
 
@@ -124,7 +159,8 @@ public:
 		const Date  theBirthDate,
 		const string theAddress,
 		StudentStatus theStatus,
-		Department theDepartment);
+		Department theDepartment,
+		Qualification theQualification = HighSchool);
 
 
   // copy constructor, assignment operator, destructor:
@@ -134,14 +170,15 @@ public:
 
 	 void setStatus(StudentStatus aStatus);
 	 StudentStatus getStatus() const;
-	 void setDepartment(Department dept);
-	 Department getDepartment() const;
-
+	 void setQualification(Qualification quli);
+	 Qualification getQualification()const;
+	 virtual void setDepartment(Department dept);
+	 virtual Department getDepartment() const;
 	 virtual bool enrollForCourse(Course& aCourse);
-	 bool dropFromCourse(Course& theCourse);
-	 void dropAllCourse();
-	 void listCoursesRegisteredFor() const;
-
+	 virtual bool dropFromCourse(Course& theCourse);
+	 virtual void dropAllCourse();
+	 virtual void listCoursesRegisteredFor() const;
+	 virtual Qualification getStudentQualification()const;
 	 virtual void print() const;
 };
 
@@ -151,7 +188,7 @@ constexpr int MaxGraders = 2;
 //////////// derived class Teacher /////////////
 
 
-class Teacher : virtual public Person {
+class Teacher : public Person , public M_QualifiedToTeach{
   
   Rank             rank;
   double           salary;
@@ -160,36 +197,41 @@ class Teacher : virtual public Person {
   int              numGraders;
   Course*          coursesOffered[ MaxCoursesForTeacher ];
   string           graders[ MaxGraders ]; 
-  
+  double           yearOfExperience;
+  Qualification    qualification;
 public:
 
 	Teacher();
 	Teacher(const string& theName, long theSSN, const Date theBirthDate,
-		const string& theAddress, Rank theRank, Department theDepartment, double theSalary);
+		const string& theAddress, Rank theRank, Department theDepartment, double theSalary, double theYearOfExperience, Qualification theQualification = Doctorate);
 	Teacher(const Teacher& other);
 	Teacher& operator=(const Teacher& other);
 	~Teacher();
 
-	void setDepartment(Department dept);
-	Department getDepartment() const;
+	virtual void setDepartment(Department dept);
+	virtual Department getDepartment() const;
 
   // change rank when the teacher is promoted
-	virtual bool setRank(Rank newRank);
+	bool setRank(Rank newRank);
 	Rank getRank() const;
 	void listCoursesTaught() const;
   // offer this course
-	bool offerCourse(Course& aCourse);
+	virtual bool offerCourse(Course& aCourse);
   // cancel this course
-	bool dropCourse(Course& theCourse);
-	void dropAllCourse();
+	virtual bool dropCourse(Course& theCourse);
+	virtual void dropTeachAllCourse();
+
+	virtual void listCoursesQuailfuedToTeach() const;
+	virtual void setYearOfExperience(double year);
+	virtual double getYearOfExperience() const;
+
+	virtual Qualification getHighestDegree() const;
+	virtual void setSalary(double sal);
+	virtual double getSalary() const;
 
 	bool assignGrader(const string& newGrader);
 	bool dropGrader(const string& grader);
 	void listGraders() const;
-
-	double getSalary() const;
-	void setSalary(double theSalary);
-
 	virtual void print() const;
 };
 
@@ -204,7 +246,6 @@ class GraduateStudent : public Student {
   
   Teacher* advisor;
   unsigned short numCourses; 
-
 public:
   
   //constructor:
@@ -215,19 +256,24 @@ public:
 		const string& theAddress,
 		StudentStatus theStatus,
 		Department theDepartment,
-		Teacher& theAdvisor);
+		Teacher& theAdvisor,
+		Qualification theQualification = Undergraduate);
 	GraduateStudent(const GraduateStudent& other);
 	GraduateStudent&  operator=(const GraduateStudent& other);
 	~GraduateStudent();
 	//need to override the following method inherited from 
 	//Student class because a grad students cannot enroll in 
 	//low-level courses
-	bool enrollForCourse(Course& aCourse );
-
 	void changeAdvisor(Teacher& newAdvisor);
-
-	Teacher& getAdvisor() const;
+	virtual void setDepartment(Department dept);
+	virtual Department getDepartment() const;
+	virtual bool enrollForCourse(Course& aCourse);
+	virtual bool dropFromCourse(Course& theCourse);
+	virtual void dropAllCourse();
+	virtual void listCoursesRegisteredFor() const;
+	virtual Qualification getStudentQualification()const;
 	virtual void print() const;
+	Teacher& getAdvisor() const;
 };
 
 
@@ -235,8 +281,12 @@ public:
 //////////// derived class GradTeachAsst ///////////////
 
 
-class GradTeachAsst : public GraduateStudent, public Teacher {
-
+class GradTeachAsst : public GraduateStudent, public M_QualifiedToTeach {
+	double        salary;
+	double        yearOfExperience;
+	Rank          rank;
+	Course*       coursesOffered[MaxCoursesForTeacher];
+	int           numCourses;
 public:
 
   //constructor:
@@ -246,27 +296,35 @@ public:
                  const Date theBirthDate,
                  const string& theAddress,
                  StudentStatus theStatus,
-                 Department studentDepartment,    // (A)
+                 Department studentDepartment,
                  Teacher& theAdvisor,
-                 Department teachingDepartment,    // compare to A
-				 Rank theRank = GradTeachingAsst);
+                 Department teachingDepartment, 
+	             double theSalary,
+	             Qualification theQualification = Undergraduate,
+	             double theYearOfExperience = 0,
+	             Rank theRank = GradTeachingAsst);
 
 
   GradTeachAsst( const GradTeachAsst& other );
   GradTeachAsst& operator=( const GradTeachAsst& other );
   ~GradTeachAsst();
 
-  void setStudentDepartment( Department dept );
-  Department getStudentDepartment() const;
-  
-  void setTeachingDepartment( Department dept );
-  Department getTeachingDepartment() const;
-  
-  // this method must be overridden because for a GradTeachAsst
-  // the rank cannot be changed
-  bool setRank(Rank newRank);
-
-  // this method must be overridden because of name conflict
-  // from two different bases  
-  virtual void print() const;   
+  Rank getRank()const;
+  virtual void setDepartment(Department dept);
+  virtual Department getDepartment() const;
+  virtual bool enrollForCourse(Course& aCourse);
+  virtual bool dropFromCourse(Course& theCourse);
+  virtual void dropAllCourse();
+  virtual void listCoursesRegisteredFor() const;
+  virtual Qualification getStudentQualification()const;
+  virtual void listCoursesQuailfuedToTeach() const;
+  virtual void setYearOfExperience(double);
+  virtual double getYearOfExperience() const;
+  virtual Qualification getHighestDegree() const;
+  virtual void setSalary(double theSalary);
+  virtual double getSalary() const;
+  virtual bool offerCourse(Course& aCourse);
+  virtual bool dropCourse(Course& theCourse);
+  virtual void dropTeachAllCourse();
+  virtual void print() const;
 };

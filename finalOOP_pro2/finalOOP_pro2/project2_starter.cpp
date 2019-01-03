@@ -19,6 +19,11 @@ static string rankNames[] = { "Instructor",
 							 "ResScientist",
 							 "Dean"
 							 "Unknown" };
+static string qualificationName[] = { "NoSchooling",
+                                      "HighSchool",
+	                                  "Undergraduate",
+	                                  "Graduate",
+	                                  "Doctorate" };
 Date::Date(int dd, int mm, int yy)
 {
 	checkDate(dd, mm, yy);
@@ -195,17 +200,18 @@ void Person::print() const {
 		<< "BirthDate = " << birthdate << endl;
 }
 ///////////////// derived class Student //////////////
-Student::Student() :Person(), status(sUnknown), department(dUnknown), numCourses(0){
+Student::Student() :Person(), status(sUnknown), department(dUnknown), numCourses(0), qualification(HighSchool) {
 }
-
 // constructor:
 Student::Student(const string theName,
 	unsigned long theSSN,
 	const Date  theBirthDate,
 	const string theAddress,
 	StudentStatus theStatus,
-	Department theDepartment)
-	: Person(theName, theSSN, theBirthDate, theAddress), status(theStatus), department(theDepartment), numCourses(0){
+	Department theDepartment,
+	Qualification theQualification
+	)
+	: Person(theName, theSSN, theBirthDate, theAddress), status(theStatus), department(theDepartment), numCourses(0), qualification(theQualification){
 }
 
 
@@ -213,12 +219,14 @@ Student::Student(const string theName,
 Student::Student(const Student& other) :Person(other), numCourses(0) {
 	status = other.status;
 	department = other.department;
+	qualification = other.qualification;
 }
 Student& Student::operator=(const Student& other) {
 	if (this != &other) {
 		Person::operator=(other);
 		status = other.status;
 		department = other.department;
+		qualification = other.qualification;
 	}
 	return *this;
 }
@@ -231,6 +239,12 @@ void Student::setStatus(StudentStatus aStatus) {
 }
 StudentStatus Student::getStatus() const {
 	return status;
+}
+void Student::setQualification(Qualification quli) {
+	qualification = quli;
+}
+Qualification Student::getQualification()const {
+	return qualification;
 }
 void Student::setDepartment(Department dept) {
 	department = dept;
@@ -279,36 +293,48 @@ void Student::listCoursesRegisteredFor() const {
 		cout << "course : " << enrolled[i]->getCourseName() << endl;
 	}
 }
+Qualification Student::getStudentQualification() const {
+	return qualification;
+}
 
 void Student::print() const {
 	Person::print();
 	cout << "status = " << statusLabels[status] << endl
-		<< "department = " << departmentNames[department] << endl;
+		 << "department = " << departmentNames[department] << endl
+	     << "Education = " << qualificationName[qualification] << endl;
 }
 //////////// derived class Teacher /////////////
-Teacher::Teacher() :Person(), rank(rUnknown), department(dUnknown), salary(0), numCourses(0), numGraders(0) {};
+Teacher::Teacher() :Person(), rank(rUnknown), department(dUnknown), salary(0), numCourses(0), numGraders(0), yearOfExperience(0), qualification(Doctorate){};
 Teacher::Teacher(const string& theName, long theSSN, const Date theBirthDate,
-	const string& theAddress, Rank theRank, Department theDepartment, double theSalary): 
+	const string& theAddress, Rank theRank, Department theDepartment, double theSalary, double theYearOfExperience, Qualification theQualification) :
 	Person(theName, theSSN, theBirthDate, theAddress), rank(theRank),
 	department(theDepartment),
 	salary(theSalary),
 	numCourses(0),
-	numGraders(0){
+	numGraders(0),
+	yearOfExperience(theYearOfExperience),
+	qualification(theQualification) {
 }
 Teacher::Teacher(const Teacher& other) :Person(other), numCourses(0), numGraders(0) {
 	rank = other.rank;
 	department = other.department;
+	yearOfExperience = other.yearOfExperience;
+	qualification = other.qualification;
+	salary = other.salary;
 }
 Teacher& Teacher::operator=(const Teacher& other) {
 	if (this != &other) {
 		Person::operator=(other);
 		rank = other.rank;
 		department = other.department;
+		yearOfExperience = other.yearOfExperience;
+		qualification = other.qualification;
+		salary = other.salary;
 	}
 	return *this;
 }
 Teacher::~Teacher() {
-	dropAllCourse();
+	dropTeachAllCourse();
 }
 
 void Teacher::setDepartment(Department dept) {
@@ -357,11 +383,31 @@ bool Teacher::dropCourse(Course& theCourse) {
 	}
 	return false;
 }
-void Teacher::dropAllCourse() {
+void Teacher::dropTeachAllCourse() {
 	for (int i = 0; i < numCourses; i++) {
 			coursesOffered[i]->removeAllOwnerStudent();
 	}
 	numCourses=0;
+}
+void Teacher::listCoursesQuailfuedToTeach() const {
+	cout << getName() << "'s courses quailfue list" << endl;
+	for (int i = 0; i < numCourses; i++) {
+		if (coursesOffered[i]->getCourseId() > 1000) {
+			cout << "course : " << coursesOffered[i]->getCourseName() << "quailfued is " << qualificationName[Graduate];
+		}
+		else {
+			cout << "course : " << coursesOffered[i]->getCourseName() << "quailfued is " << qualificationName[Undergraduate];
+		}
+	}
+}
+double Teacher::getYearOfExperience() const {
+	return yearOfExperience;
+}
+void Teacher::setYearOfExperience(double year){
+	yearOfExperience = year;
+}
+Qualification Teacher::getHighestDegree() const {
+	return qualification;
 }
 bool Teacher::assignGrader(const string& newGrader) {
 	if (numGraders >= MaxGraders) {
@@ -390,53 +436,57 @@ void Teacher::listGraders() const {
 		cout << "graders : " << graders[i] << endl;
 	}
 }
-
+void Teacher::setSalary(double sal)  {
+	salary = sal;
+}
 double Teacher::getSalary() const {
 	return salary;
-}
-void Teacher::setSalary(double theSalary) {
-	salary = theSalary;
 }
 
 void Teacher::print() const {
 	Person::print();
 	cout << "rank = " << rankNames[rank] << endl
 		<< "salary = " << salary << endl
-		<< "department = " << departmentNames[department] << endl;
+		<< "department = " << departmentNames[department] << endl
+		<< "year of experience = " << yearOfExperience << endl
+		<< "qualification = " << qualificationName[qualification] << endl;
 }
 ////////// derived class GraduateStudent /////////////
-GraduateStudent::GraduateStudent() : Student(), Person(), advisor(nullptr) {
+GraduateStudent::GraduateStudent() : Student(), advisor(nullptr){
+	setQualification(Undergraduate);
 }
-
 GraduateStudent::GraduateStudent(const string& theName,
 	unsigned long theSSN,
 	const Date theBirthDate,
 	const string& theAddress,
 	StudentStatus theStatus,
 	Department theDepartment,
-	Teacher& theAdvisor)
-	: Student(theName, theSSN, theBirthDate, theAddress, theStatus, theDepartment),
-	  Person(theName, theSSN, theBirthDate, theAddress),
+	Teacher& theAdvisor,
+	Qualification theQualification)
+	: Student(theName, theSSN, theBirthDate, theAddress, theStatus, theDepartment, theQualification),
 	  advisor(&theAdvisor) {
 }
 
-GraduateStudent::GraduateStudent(const GraduateStudent& other) : Student(other),Person(other) {
+GraduateStudent::GraduateStudent(const GraduateStudent& other) : Student(other) {
 	advisor = other.advisor;
+	setQualification(other.getQualification());
 }
 GraduateStudent&  GraduateStudent::operator=(const GraduateStudent& other) {
 	if (this != &other) {
 		Student::operator=(other);
 		advisor = other.advisor;
+		setQualification(other.getQualification());
 	}
 	return *this;
 }
 GraduateStudent::~GraduateStudent() {
+	dropAllCourse();
 }
 //need to override the following method inherited from 
 //Student class because a grad students cannot enroll in 
 //low-level courses
 bool GraduateStudent::enrollForCourse(Course& aCourse) {
-	if (aCourse.getCourseId() < 1000){// low-level courses
+	if (aCourse.getCourseId() < 1000){ // low-level courses
 		cout << aCourse.getCourseName() << " is low-level course." << endl;
 		return false;
 	}
@@ -448,7 +498,25 @@ bool GraduateStudent::enrollForCourse(Course& aCourse) {
 void GraduateStudent::changeAdvisor(Teacher& newAdvisor) {
 	advisor = &newAdvisor;
 }
+void GraduateStudent::setDepartment(Department dept) {
+	Student::setDepartment(dept);
+}
+Department GraduateStudent::getDepartment() const {
+	return Student::getDepartment();
+}
 
+bool GraduateStudent::dropFromCourse(Course& theCourse) {
+	return Student::dropFromCourse(theCourse);
+}
+void GraduateStudent::dropAllCourse() {
+	return Student::dropAllCourse();
+}
+void GraduateStudent::listCoursesRegisteredFor() const {
+	Student::listCoursesRegisteredFor();
+}
+Qualification GraduateStudent::getStudentQualification() const {
+	return getQualification();
+}
 Teacher& GraduateStudent::getAdvisor() const {
 	if (advisor == nullptr) {
 		throw runtime_error("teacher is null");
@@ -461,7 +529,12 @@ void GraduateStudent::print() const {
 	cout << "advisor = " << advisor->getName() << endl;
 }
 //////////// derived class GradTeachAsst ///////////////
-GradTeachAsst::GradTeachAsst() :GraduateStudent(), Teacher(), Person() {
+GradTeachAsst::GradTeachAsst() :GraduateStudent(),
+	salary(0),
+	rank(GradTeachingAsst),
+	yearOfExperience(0),
+	numCourses(0){
+	setQualification(Undergraduate);
 }
 GradTeachAsst::GradTeachAsst(const string& theName,
 	unsigned long theSSN,
@@ -471,50 +544,110 @@ GradTeachAsst::GradTeachAsst(const string& theName,
 	Department studentDepartment,    // (A)
 	Teacher& theAdvisor,
 	Department teachingDepartment,    // compare to A
-	Rank theRank):GraduateStudent(theName,theSSN,theBirthDate,theAddress,theStatus, studentDepartment,theAdvisor),
-	Teacher(theName, theSSN, theBirthDate, theAddress, theRank, teachingDepartment,0.0),
-	Person(theName, theSSN, theBirthDate, theAddress) {
+	double theSalary,
+	Qualification theQualification,
+	double theYearOfExperience,
+	Rank theRank):GraduateStudent(theName,theSSN,theBirthDate,theAddress,theStatus, studentDepartment,theAdvisor, theQualification),
+	salary(theSalary),
+	rank(theRank),
+	yearOfExperience(theYearOfExperience),
+	numCourses(0) {
 }
 
-GradTeachAsst::GradTeachAsst(const GradTeachAsst& other) : GraduateStudent(other), Teacher(other), Person(other){
+GradTeachAsst::GradTeachAsst(const GradTeachAsst& other) :  GraduateStudent(other),
+															salary(other.salary),
+															rank(other.rank),
+															yearOfExperience(other.yearOfExperience),
+															numCourses(0) {
+	setQualification(other.getQualification());
 }
 GradTeachAsst& GradTeachAsst::operator=(const GradTeachAsst& other) {
 	if (this != &other) {
 		GraduateStudent::operator=(other);
-		Teacher::operator=(other);
-		Person::operator=(other);
+		salary = other.salary;
+		rank = other.rank;
+		setQualification(other.getQualification());
+		yearOfExperience = other.yearOfExperience;
 	}
 	return *this;
 }
 GradTeachAsst::~GradTeachAsst() {
+	dropAllCourse();
+	dropTeachAllCourse();
 }
-
-void GradTeachAsst::setStudentDepartment(Department dept) {
+Rank GradTeachAsst::getRank()const {
+	return rank;
+}
+void GradTeachAsst::setDepartment(Department dept) {
 	GraduateStudent::setDepartment(dept);
 }
-Department GradTeachAsst::getStudentDepartment() const {
+Department GradTeachAsst::getDepartment() const {
 	return GraduateStudent::getDepartment();
 }
-
-void GradTeachAsst::setTeachingDepartment(Department dept) {
-	Teacher::setDepartment(dept);
+bool GradTeachAsst::enrollForCourse(Course& aCourse) {
+	return GraduateStudent::enrollForCourse(aCourse);
 }
-Department GradTeachAsst::getTeachingDepartment() const {
-	return Teacher::getDepartment();
+bool GradTeachAsst::dropFromCourse(Course& theCourse) {
+	return GraduateStudent::dropFromCourse(theCourse);
 }
+void GradTeachAsst::dropAllCourse() {
+	return GraduateStudent::dropAllCourse();
+}
+void GradTeachAsst::listCoursesRegisteredFor() const {
+	GraduateStudent::listCoursesRegisteredFor();
+}
+Qualification GradTeachAsst::getStudentQualification()const {
+	return getQualification();
+}
+void GradTeachAsst::listCoursesQuailfuedToTeach() const {
+}
+void GradTeachAsst::setYearOfExperience(double year) {
+	yearOfExperience = year;
+}
+double GradTeachAsst::getYearOfExperience() const {
+	return yearOfExperience;
+}
+Qualification GradTeachAsst::getHighestDegree() const {
+	return getStudentQualification();
+}
+void GradTeachAsst::setSalary(double theSalary) {
+	salary = theSalary;
+}
+double GradTeachAsst::getSalary() const {
+	return salary;
+}
+bool GradTeachAsst::offerCourse(Course& aCourse) {
+	if (numCourses >= MaxCoursesForTeacher) {
+		cout << getName() << "'s course number is full." << endl;
+		return false;
+	}
+	else {
+		coursesOffered[numCourses] = &aCourse;
+		numCourses++;
+		return true;
+	}
+}
+bool GradTeachAsst::dropCourse(Course& theCourse) {
+	for (int i = 0; i < numCourses; i++) {
+		if (*coursesOffered[i] == theCourse) {  //swap i and last
+			coursesOffered[i]->removeAllOwnerStudent();
+			numCourses--;
+			coursesOffered[i] = coursesOffered[numCourses];
 
-// this method must be overridden because for a GradTeachAsst
-// the rank cannot be changed
-bool GradTeachAsst::setRank(Rank newRank) {
-	cout << getName() << " unable to modify rank." << endl;
+			return true;
+		}
+	}
 	return false;
 }
-
-// this method must be overridden because of name conflict
-// from two different bases  
+void GradTeachAsst::dropTeachAllCourse() {
+	for (int i = 0; i < numCourses; i++) {
+		coursesOffered[i]->removeAllOwnerStudent();
+	}
+	numCourses = 0;
+}
 void GradTeachAsst::print() const {
 	GraduateStudent::print();
-	cout << "rank = " << rankNames[getRank()] << endl
-		<< "salary = " << getSalary() << endl
-		<< "teaching department = " << departmentNames[Teacher::getDepartment()] << endl;
+	cout << "salary = " << getSalary() << endl
+		<< "yearOfExperience = " << yearOfExperience << endl
+		<< "rank = " << rankNames[rank] << endl;
 }

@@ -393,10 +393,10 @@ void Teacher::listCoursesQuailfuedToTeach() const {
 	cout << getName() << "'s courses quailfue list" << endl;
 	for (int i = 0; i < numCourses; i++) {
 		if (coursesOffered[i]->getCourseId() > 1000) {
-			cout << "course : " << coursesOffered[i]->getCourseName() << "quailfued is " << qualificationName[Graduate];
+			cout << "course : " << coursesOffered[i]->getCourseName() << "quailfued is " << qualificationName[Graduate] << endl;
 		}
 		else {
-			cout << "course : " << coursesOffered[i]->getCourseName() << "quailfued is " << qualificationName[Undergraduate];
+			cout << "course : " << coursesOffered[i]->getCourseName() << "quailfued is " << qualificationName[Undergraduate] << endl;
 		}
 	}
 }
@@ -600,6 +600,15 @@ Qualification GradTeachAsst::getStudentQualification()const {
 	return getQualification();
 }
 void GradTeachAsst::listCoursesQuailfuedToTeach() const {
+	cout << getName() << "'s courses quailfue list" << endl;
+	for (int i = 0; i < numCourses; i++) {
+		if (coursesOffered[i]->getCourseId() > 1000) {
+			cout << "course : " << coursesOffered[i]->getCourseName() << "quailfued is " << qualificationName[Graduate] << endl;
+		}
+		else {
+			cout << "course : " << coursesOffered[i]->getCourseName() << "quailfued is " << qualificationName[Undergraduate] << endl;
+		}
+	}
 }
 void GradTeachAsst::setYearOfExperience(double year) {
 	yearOfExperience = year;
